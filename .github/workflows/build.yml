@@ -1,0 +1,48 @@
+name: Build VPK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: vitasdk/vitasdk:latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install build dependencies
+        run: |
+          dnf install -y make cmake
+          vdpm libvita2d
+
+      - name: Configure with CMake
+        run: |
+          mkdir -p build
+          cd build
+          cmake -DCMAKE_TOOLCHAIN_FILE=$VITASDK/share/vita.toolchain.cmake ..
+
+      - name: Build VPK
+        run: |
+          cd build
+          make -j$(nproc)
+
+      - name: Upload VPK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitajme-vpk
+          path: build/vitajme.vpk
+          if-no-files-found: error
+
+      - name: Upload SELF artifact (debug)
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitajme-self
+          path: build/vitajme.self
+          if-no-files-found: ignore
