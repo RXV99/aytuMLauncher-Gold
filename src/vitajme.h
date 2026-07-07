@@ -145,7 +145,9 @@ extern AppConfig g_app;
 #define MAX(a, b)           ((a) > (b) ? (a) : (b))
 
 /* RGBA colour helper (vita2d format: 0xAABBGGRR) */
+#ifndef RGBA8
 #define RGBA8(r,g,b,a)  (((a)<<24) | ((b)<<16) | ((g)<<8) | (r))
+#endif
 
 /* Logging */
 #ifdef DEBUG

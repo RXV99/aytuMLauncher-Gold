@@ -5,6 +5,14 @@
 #include <ctype.h>
 #include <psp2/io/fcntl.h>
 
+// strdup is not available in VitaSDK newlib without _POSIX_C_SOURCE
+static char* vjme_strdup(const char *s) {
+    size_t len = strlen(s) + 1;
+    char *copy = malloc(len);
+    if (copy) memcpy(copy, s, len);
+    return copy;
+}
+
 static void trim_whitespace(char *str) {
     if (!str) return;
     
@@ -63,7 +71,7 @@ static void parse_line(const char *line, JadInfo *info) {
 }
 
 static bool parse_buffer(const char *buffer, JadInfo *info) {
-    char *buf_copy = strdup(buffer);
+    char *buf_copy = vjme_strdup(buffer);
     if (!buf_copy) return false;
     
     char *line = strtok(buf_copy, "\r\n");

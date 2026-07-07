@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <psp2/io/dirent.h>
 #include <psp2/io/fcntl.h>
+#include <psp2/io/stat.h>
+#include <psp2/ctrl.h>
 #include <vita2d.h>
 
 #define MAX_MIDLETS 100
@@ -37,7 +39,7 @@ void launcher_scan_midlets(void) {
     while (sceIoDread(dfd, &dir) > 0 && g_midlet_count < MAX_MIDLETS) {
         if (!SCE_S_ISDIR(dir.d_stat.st_mode)) {
             char *ext = strrchr(dir.d_name, '.');
-            if (ext && strcasecmp(ext, ".jar") == 0) {
+            if (ext && (strcmp(ext, ".jar") == 0 || strcmp(ext, ".JAR") == 0)) {
                 MidletEntry *entry = &g_midlets[g_midlet_count];
                 snprintf(entry->jar_path, sizeof(entry->jar_path), "%s%s", JAVA_DATA_ROOT, dir.d_name);
                 
