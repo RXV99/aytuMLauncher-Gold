@@ -17,10 +17,8 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install build dependencies
-        run: |
-          dnf install -y make cmake
-          vdpm libvita2d
+      - name: Install libvita2d
+        run: vdpm libvita2d
 
       - name: Configure with CMake
         run: |
